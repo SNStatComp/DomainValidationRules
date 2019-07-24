@@ -1,0 +1,56 @@
+---
+options:
+  lin.eq.eps: 0
+  lin.ineq.eps: 0 
+---
+rules:
+- expr: any(FREQ == meta$FREQ & INDICATOR == meta$INDICATOR & TIME_PERIOD == meta$PERIOD)
+  name: "STS01"
+  label: "Correct series"
+  description: |
+    The indicators, the periodicity and the last observation 
+    period of at least one time series must be the same as in 
+    the identification in the EDAMIS flow. 
+- expr: RTS(TIME_PERIOD, ftp="2017-Q1",ltp="2019-Q3",FREQ, REF_AREA, SEASONAL_ADJUST, INDICATOR, ACTIVITY) == TRUE
+  name: "STS02"
+  label: "No gaps"
+  description: | 
+    No missing observations (gaps) are accepted in time series, 
+    sent in one or several files – i.e. files should be sent in 
+    the chronological order based on the latest observation.
+- expr: if (INDICATOR %in% c("IMPZ","PRBB","PREN","PREX","PREZ","PRIN","PRON")) OBS_VALUE > 0
+  name: "STS03"
+  label: "Prices positive"
+  description: | 
+    Zeroes are not admitted for prices.
+    created: 2019-03-01 15:41:02
+    origin: rules.R
+- expr: OBS_VALUE >= 0
+  name: 'STS04'
+  label: 'No negative observations'
+  description: | 
+    Negative values are not accepted for any series or observations, 
+    including seasonally adjusted series.
+- expr: anyDuplicated(.[names(.) != "OBS_VALUE"]) == FALSE
+  name: 'STS05'
+  label: 'unique observations'
+  description: | 
+    Different values for the same observation (double values) 
+    are not accepted in one file.
+- expr: sum(SEASONAL_ADJUST == "N") & sum(SEASONAL_ADJUST == "W")
+  name: 'STS06'
+  label: "all series types"
+  description: |
+    Transmission of one time series in different presentations (gross, 
+    calendar and seasonally adjusted) should be in one file. Here,
+    we check that for each type of SA there are an equal number of 
+    cases.
+- expr: mean( OBS_VALUE[BASE_PER == year_from_period(TIME_PERIOD) ])  == 100 
+  name: 'STS10'
+  label: 'base index is 100'
+  description: | 
+    The average index value of the base year (reference year)
+    should be 100 for the unadjusted series, for the
+    calendar adjusted series and for the calendar and seasonally 
+    adjusted series, except when the difference
+    from 100 is duly justified in national reference metadata.
