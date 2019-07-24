@@ -9,7 +9,7 @@ using R package [validate](https://cran.r-project.org/package=validate) and [Gen
 
 ### Implemented rules
 
-- [Short term statistics](STS/README.md)
+- [Short term statistics](STS)
 
 
 
