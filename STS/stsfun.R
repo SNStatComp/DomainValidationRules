@@ -38,9 +38,9 @@ read_sts <- function(file){
       DOMAIN    = str_parts[1]
     , INDICATOR = str_parts[2] 
     , FREQ      = str_parts[3]
-    , PERIOD    = paste(str_parts[4],as.integer(str_parts[5]))
+    , PERIOD    = sprintf("%sQ%1d", str_parts[4], as.integer(str_parts[5]))
     , VERSION   = str_parts[6]
-    )
+    , stringsAsFactors=FALSE)
     
   list(data=dat, meta=meta)
 }
