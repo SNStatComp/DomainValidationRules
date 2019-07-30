@@ -37,7 +37,7 @@ View(validation_data)
 # validatereport (version >= 0.5.0)
 library(validatereport)
 
-export_ess_validation_report(out, rls, file="STS/STS_validation_report.json")
+export_ess_validation_report(out, rls, file="STS/report/STS_validation_report.json")
 
 
 
