@@ -10,15 +10,15 @@ using R package [validate](https://cran.r-project.org/package=validate) and [Gen
 ### Implemented rules
 
 - [Short term statistics](STS) rules:
-   STS01: "Correct series"
-   STS02: "No gaps"
-   STS03: "Prices positive"
-   STS04: "No negative observations"
-   STS05: "unique observations"
-   STS06: "all series types"
-   STS10: "base index is 100"
+   - STS01: "Correct series",
+   - STS02: "No gaps",
+   - STS03: "Prices positive",
+   - STS04: "No negative observations",
+   - STS05: "unique observations",
+   - STS06: "all series types",
+   - STS10: "base index is 100",
 
 - [National Accounts](NA) rules:
-   NA_MAIN_VCO_Consistency_between_Prices: "Chain linked formula"
+   - NA_MAIN_VCO_Consistency_between_Prices: "Chain linked formula"
 
 
