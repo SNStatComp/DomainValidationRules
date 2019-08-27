@@ -1,0 +1,22 @@
+// Y[T]= L [T]/L [T-1] * V [T-1]
+// ds_Y_CY = ds_L_CY / ds_L_PY * ds_V_PY
+
+ds_PY := lag ( na_main, 1  over ( order by time ));
+
+ds_L_CY := na_main [ sub prices = "L" ] ;
+ds_L_PY := ds_PY [ sub prices = "L" ] ;
+ds_V_PY := ds_PY [ sub prices = "V" ] ;
+ds_Y_CY := na_main [ sub prices = "Y" ] ;
+
+// Check if (ABS(Y[T] - (L[T]/L[T-1]*V[T-1])) / Y[T]) < 0.001 (LT= parameter = 0.1%) 
+
+ErrB:= check((abs(ds_Y_CY-(ds_L_CY / ds_L_PY[ filter obs_value <> 0 ] * ds_V_PY)) / ds_Y_CY [ filter obs_value <> 0 ]) < 0.001 
+	errorcode "The observation values do not comply with the Y(t)= L(t) * V(t-1) / L(t-1) relation"
+	errorlevel "Error" );
+
+ErrB
+
+//VTL language comments:
+//  - A keyword to [Set Constant + Drop Dimension] would simplify the definitions of ds_[LVY]_[CP]Y dataset variables
+//  - There's no easy way to show a sort of imbalance calculation of the results of the test in order to easily detect if the check deviates from the threshold largely or closely 
+//  ===> Selection of several measure to be shown in the error table in order to understand the issue.
