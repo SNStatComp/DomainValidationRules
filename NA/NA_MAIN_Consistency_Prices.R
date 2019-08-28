@@ -8,25 +8,28 @@ library('dplyr')
 # Generic function for selecting data:
 selectSet <- function(data, selections, join_cols, value_col, value_names, periods) {
   data['rowid'] <- row(data)[,1]
-  res <- data.frame()
+  res <- list()
+  if (is.null(periods)) {
+    join <- join_cols
+  } else {
+    data$PERIOD_T = group_indices(data, TIME_PERIOD)
+    data$PERIOD_TMIN1 = data$PERIOD_T + 1
+    join <- c(join_cols, 'JOIN_PERIOD')
+  }
   for (i in 1:length(selections)) {
     selcols <- c(join_cols, value_col, 'rowid', periods[i])
     newdata <- subset(data,eval(selections[[i]]),selcols)
-    names(newdata)[match(periods[i],names(newdata))] <- 'JOIN_PERIOD'
-    if (is.null(periods[i])) {
-      join <- join_cols
-    } else {
-      join <- c(join_cols, 'JOIN_PERIOD')
-    }
-    res <- merge(res, newdata, by=join)
-    names(res)[match(value_col,names(res))] <- value_names[i]
-    names(res)[match('rowid',names(res))] <- paste('rowid',value_names[i],sep='_')
+    colnames(newdata)[match(periods[i],colnames(newdata))] <- 'JOIN_PERIOD'
+    colnames(newdata)[match(value_col,colnames(newdata))] <- value_names[i]
+    colnames(newdata)[match('rowid',colnames(newdata))] <- paste('rowid',value_names[i],sep='_')
+    res[[i]] <- newdata
   }
-  return(res)
+  r <- Reduce(function(x,y)merge(x,y,by=join),res)
+  return(r)
 }
 
 # Read data:
-nr <- read.csv('./data/20180416_NAMAIN_T0101_A_NL_2016_0000_4D_V0003.csv',sep=";")
+nr <- read.csv('./data/20180416_NAMAIN_T0101_A_NL_2016_0000_4D_V0004.csv',sep=";")
 
 # Add T minus 1 column:
 nr$PERIOD_T = group_indices(nr, TIME_PERIOD)
